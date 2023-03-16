@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj.motorcontrol.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot {
     // Define CAN bus ports for motor controllers
-    private static final int kLeftMasterPort = 1;
-    private static final int kLeftFollowerPort = 12;
-    private static final int kRightMasterPort = 3;
+    private static final int kLeftMasterPort = 3;
+    private static final int kLeftFollowerPort = 1;
+    private static final int kRightMasterPort = 12;
     private static final int kRightFollowerPort = 2;
 
     // Define deadband for joystick input
@@ -35,6 +36,9 @@ public class Robot extends TimedRobot {
     // Initialize motor controller groups for left and right side of robot
     MotorControllerGroup m_right;
     MotorControllerGroup m_left;
+
+    //Initialize the turning 180 degrees time duration
+    private static final double turnDuration = 2.0;
 
     // Runs once when the robot is turned on
     @Override
@@ -81,9 +85,23 @@ public class Robot extends TimedRobot {
         move = Math.abs(move) > kDeadband ? move : 0;
         turn = Math.abs(turn) > kDeadband ? turn : 0;
 
+        // Apply turbo
+        if (m_driverController.getRawButtonPressed(2)) {
+            move *= 2;
+        }
+        
+        // Turn the robot 180 degrees
+        if (m_driverController.getRawButtonPressed(3)) {
+            m_leftMaster.set(0.5);
+            m_rightMaster.set(0.5);
+            Timer.delay(turnDuration);
+            m_leftMaster.stopMotor();
+            m_rightMaster.stopMotor();
+        }
+
         // Drive the robot with the joystick inputs
         m_drive.arcadeDrive(move, turn);
-
+        m_drive.arcadeDrive(move, turn);
         // Send some telemetry to the dashboard
         SmartDashboard.putNumber("Move", move);
         SmartDashboard.putNumber("Turn", turn);
