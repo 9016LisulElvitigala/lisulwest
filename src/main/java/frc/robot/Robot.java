@@ -13,9 +13,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
     // Define CAN bus ports for motor controllers
     private static final int kLeftMasterPort = 1;
-    private static final int kLeftFollowerPort = 2;
+    private static final int kLeftFollowerPort = 12;
     private static final int kRightMasterPort = 3;
-    private static final int kRightFollowerPort = 4;
+    private static final int kRightFollowerPort = 2;
 
     // Define deadband for joystick input
     private static final double kDeadband = 0.1;
@@ -68,7 +68,6 @@ public class Robot extends TimedRobot {
 
         // Set the left motor controller to reverse direction
         m_leftMaster.setInverted(true);
-
     }
 
     // Runs periodically during the teleoperated (driver-controlled) period
