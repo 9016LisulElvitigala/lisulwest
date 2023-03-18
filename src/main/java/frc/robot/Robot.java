@@ -83,8 +83,8 @@ public class Robot extends TimedRobot {
 
 
         // Set the idle mode for all motor controllers to brake
-        m_leftMaster.setIdleMode(IdleMode.kBrake);
-        m_rightMaster.setIdleMode(IdleMode.kBrake);
+        m_leftMaster.setIdleMode(1);
+        m_rightMaster.setIdleMode(1);
 
 
         // Set the left motor controller to reverse direction
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         // Get joystick input for forward/backward movement and turning
-        double move = -m_driverController.getRawAxis(1)*0.;
+        double move = -m_driverController.getRawAxis(1)*0.8;
         double turn = m_driverController.getRawAxis(4)*0.7 ;
 
 
