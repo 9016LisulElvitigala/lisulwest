@@ -65,8 +65,9 @@ public class Robot extends TimedRobot {
         m_rightFollower.follow(m_rightMaster);
 
         // Set the idle mode for all motor controllers to brake
-        m_leftMaster.setIdleMode(IdleMode.kBrake);
-        m_rightMaster.setIdleMode(IdleMode.kBrake);
+        m_leftMaster.setIdleMode(IdleMode.kCoast);
+
+        m_rightMaster.setIdleMode(IdleMode.kCoast);
 
         // Set the left motor controller to reverse direction
         m_leftMaster.setInverted(true);
@@ -83,8 +84,18 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         // Get joystick input for forward/backward movement and turning
-        double move = -m_driverController.getRawAxis(1) * 0.;
-        double turn = m_driverController.getRawAxis(4) * 0.7;
+        double move = 0;
+        double turn = 0;
+        if (Math.abs(m_driverController.getRawAxis(3)) > 0.75) {
+            move = 1.0;
+            turn = m_driverController.getRawAxis(4) * 0.7;
+        } else if (Math.abs(m_driverController.getRawAxis(2)) > 0.75) {
+            move = -m_driverController.getRawAxis(1);
+            turn = m_driverController.getRawAxis(4) * 0.7;
+        } else {
+            move = -m_driverController.getRawAxis(1) * 0.5;
+            turn = m_driverController.getRawAxis(4) * 0.65;
+        }
 
         // Apply deadband to joystick input
         move = Math.abs(move) > kDeadband ? move : 0;
