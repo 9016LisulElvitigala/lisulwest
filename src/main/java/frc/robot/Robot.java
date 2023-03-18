@@ -1,9 +1,13 @@
 package frc.robot;
 
 
+
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax.IdleMode;
+
+
 
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,12 +26,18 @@ public class Robot extends TimedRobot {
     private static final int kRightFollowerPort = 2;
 
 
+
+
     // Define deadband for joystick input
     private static final double kDeadband = 0.1;
 
 
+
+
     // Initialize joystick object
     private Joystick m_driverController;
+
+
 
 
     // Initialize motor controller objects
@@ -37,8 +47,14 @@ public class Robot extends TimedRobot {
     private CANSparkMax m_rightFollower;
 
 
+
+
     // Initialize differential drive object
     private DifferentialDrive m_drive;
+
+
+
+
 
 
 
@@ -48,8 +64,12 @@ public class Robot extends TimedRobot {
     MotorControllerGroup m_left;
 
 
+
+
     //Initialize the turning 180 degrees time duration
     private static final double turnDuration = 6.0;
+
+
 
 
     // Runs once when the robot is turned on
@@ -59,6 +79,8 @@ public class Robot extends TimedRobot {
         m_driverController = new Joystick(0);
 
 
+
+
         // Initialize motor controllers with their respective CAN bus ports
         m_leftMaster = new CANSparkMax(kLeftMasterPort, MotorType.kBrushed);
         m_leftFollower = new CANSparkMax(kLeftFollowerPort, MotorType.kBrushed);
@@ -66,7 +88,11 @@ public class Robot extends TimedRobot {
         m_rightFollower = new CANSparkMax(kRightFollowerPort, MotorType.kBrushed);
 
 
+
+
         // Set the follower motors to follow their respective master motor
+
+
 
 
         // Create motor controller groups for the left and right side of the robot
@@ -74,17 +100,27 @@ public class Robot extends TimedRobot {
         m_left = new MotorControllerGroup(m_rightMaster, m_rightFollower);
 
 
+
+
         // Create differential drive object with the left and right motor controller
         // groups
+
+
 
 
         m_leftFollower.follow(m_leftMaster);
         m_rightFollower.follow(m_rightMaster);
 
 
+
+
         // Set the idle mode for all motor controllers to brake
-        m_leftMaster.setIdleMode(IdleMode.kBrake);
-        m_rightMaster.setIdleMode(IdleMode.kBrake);
+        m_leftMaster.setIdleMode(IdleMode.kCoast);
+
+
+        m_rightMaster.setIdleMode(IdleMode.kCoast);
+
+
 
 
         // Set the left motor controller to reverse direction
@@ -95,30 +131,42 @@ public class Robot extends TimedRobot {
         m_rightFollower.setInverted(false);
 
 
+
+
         m_drive = new DifferentialDrive(m_left, m_right);
 
 
+
+
     }
+
+
 
 
     // Runs periodically during the teleoperated (driver-controlled) period
     @Override
     public void teleopPeriodic() {
         // Get joystick input for forward/backward movement and turning
-        double move = -m_driverController.getRawAxis(1)*0.;
-        double turn = m_driverController.getRawAxis(4)*0.7 ;
+        double move = 0;
+        double turn = 0;
+        if (Math.abs(m_driverController.getRawAxis(3)) > 0.75) {
+            move = 1.0;
+            turn = m_driverController.getRawAxis(4)*0.7;
+        }
+        else if (Math.abs(m_driverController.getRawAxis(2)) > 0.75)
+        {
+            move = -m_driverController.getRawAxis(1);
+            turn = m_driverController.getRawAxis(4)*0.7;
+        }
+        else {
+            move = -m_driverController.getRawAxis(1)*0.5;
+            turn = m_driverController.getRawAxis(4)*0.65;
+        }
 
 
         // Apply deadband to joystick input
         move = Math.abs(move) > kDeadband ? move : 0;
         turn = Math.abs(turn) > kDeadband ? turn : 0;
-
-
-        // Apply turbo
-        if (m_driverController.getRawButtonPressed(2)) {
-            move *= 2;
-            Timer.delay(turnDuration);
-        }
        
         // Drive the robot with the joystick inputs
         if (m_driverController.getRawButtonPressed(3)) {
@@ -131,11 +179,21 @@ public class Robot extends TimedRobot {
         }
 
 
+
+
         // Send some telemetry to the dashboard
         SmartDashboard.putNumber("Move", move);
         SmartDashboard.putNumber("Turn", turn);
     }
 }
+
+
+
+
+
+
+
+
 
 
 
