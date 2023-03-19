@@ -47,7 +47,8 @@ public class Robot extends TimedRobot {
     private final SlewRateLimiter turnLimiter = new SlewRateLimiter(3);
 
     // Initializing a PID Controller
-    
+    private PIDController pidController;
+
     // Runs once when the robot is turned on
     @Override
     public void robotInit() {
@@ -85,6 +86,7 @@ public class Robot extends TimedRobot {
         m_rightFollower.setInverted(false);
 
         m_drive = new DifferentialDrive(m_left, m_right);
+
     }
 
     // Runs periodically during the teleoperated (driver-controlled) period
