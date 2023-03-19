@@ -130,4 +130,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Move", move);
         SmartDashboard.putNumber("Turn", turn);
     }
+
+    @Override
+  public void autonomousInit() {}
+
+  @Override
+  public void autonomousPeriodic() {}
 }
